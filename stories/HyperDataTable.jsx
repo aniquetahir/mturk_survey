@@ -16,8 +16,8 @@ import './hyperdatatable.css'
 
 const columns = [
     createTableColumn({columnId: 'time', renderHeaderCell: () => 'Time', renderCell: (item) => {return item.time}}),
-    createTableColumn({columnId: 'author', renderHeaderCell: () => 'Author', renderCell: (item) => {return item.author}}),
-    createTableColumn({columnId: 'comment', renderHeaderCell: () => 'Comment', renderCell: (item) => {return item.comment}}),
+    createTableColumn({columnId: 'author', renderHeaderCell: () => 'Author', renderCell: (item) => {return item.user}}),
+    createTableColumn({columnId: 'comment', renderHeaderCell: () => 'Comment', renderCell: (item) => {return item.content}}),
 ];
 
 const styles = {
@@ -27,7 +27,7 @@ const styles = {
 }
 
 
-export const HyperDataTable = ( {data, highlight_idx, ...props} ) => {
+export const HyperDataTable = ( {data, highlight_idx, noSelection, ...props} ) => {
     // Create the table with the current comment highlighted
     // The following structure of items is used:
 	// {
@@ -36,15 +36,35 @@ export const HyperDataTable = ( {data, highlight_idx, ...props} ) => {
 	//   comment: 'string
 	// }
      // Assumption is that the comments are pre-sorted in chronological order
+    const hasSelection = noSelection?false:"multiselect";
      return (
 	<DataGrid
+        style={{width: "100%"}}
 		items={data}
 	        columns={columns}
-	        selectionMode="multiselect"
+	        selectionMode={hasSelection}
 	        getRowId={item=>item.id}
+        resizableColumns={true}
+        columnSizingOptions={{
+            time: {
+                defaultWidth: 100,
+                idealWidth: 100
+            },
+            author: {
+                defaultWidth: 150,
+                idealWidth: 150
+            },
+            comment: {
+                defaultWidth: 300,
+                idealWidth: 300
+            }
+        }}
+
 	 >
-             <DataGridHeader>
-	     	<DataGridRow selectionCell={{ "aria-label": "Select all rows"}}>
+        <DataGridHeader>
+	     	<DataGridRow
+                // selectionCell={{ "aria-label": "Select all rows"}}
+            >
 	     		{ ({ renderHeaderCell }) => (
 				<DataGridHeaderCell>{ renderHeaderCell() }</DataGridHeaderCell>
 			)}
@@ -56,7 +76,7 @@ export const HyperDataTable = ( {data, highlight_idx, ...props} ) => {
 			   key={rowId}
                style={rowId == highlight_idx ? styles.selected : {}}
                className={rowId == highlight_idx?'subject-row':'context-row'}
-			   selectionCell = {{"aria-label": "Select row"}}
+			   // selectionCell = {{"aria-label": "Select row"}}
 			>
 			    {({renderCell}) => (
 				    <DataGridCell>{renderCell(item)}</DataGridCell>
