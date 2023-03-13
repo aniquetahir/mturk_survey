@@ -48,19 +48,34 @@ export const Survey = ({sessionIdx}) => {
         </div>
     );
 
+    let [bullyIdxs, setBullyIdxs] = useState([]);
+    let [antiBullyIdxs, setAntiBullyIdxs] = useState([]);
+
+    let dataCallback = e => {
+        setBullyIdxs(e.bullying);
+        setAntiBullyIdxs(e.antiBullying);
+    };
+
     let pageElements = [
         // === Page 1 ===
         (
-            <SessionSurvey session_data={currSession}>{navigationElements}</SessionSurvey>
+            <SessionSurvey
+                dataCallback={dataCallback.bind(this)}
+                session_data={currSession}>
+                {navigationElements}
+            </SessionSurvey>
         ),
         (
-            <DirectionalitySurvey session_data={currSession}>{navigationElements}</DirectionalitySurvey>
+            <>
+            {navigationElements}
+            {/*<DirectionalitySurvey session_data={currSession}>{navigationElements}</DirectionalitySurvey>*/}
+            </>
         ),
         (
-            <BullyQuestions bully_idxs={[1,5,10]} session_data={currSession}>{navigationElements}</BullyQuestions>
+            <BullyQuestions bully_idxs={bullyIdxs} session_data={currSession}>{navigationElements}</BullyQuestions>
         ),
         (
-            <AntiBullyingQuestions antiBullyIdxs={[2,8,15]} sessionData={currSession}>{navigationElements}</AntiBullyingQuestions>
+            <AntiBullyingQuestions antiBullyIdxs={antiBullyIdxs} sessionData={currSession}>{navigationElements}</AntiBullyingQuestions>
         )
 
     ];

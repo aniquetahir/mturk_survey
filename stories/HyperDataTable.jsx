@@ -47,7 +47,9 @@ export const HyperDataTable = ( {data, highlight_idx, noSelection, callback, ...
 	        getRowId={item=>item.id}
         resizableColumns={true}
         onSelectionChange={(e, d) => {
-            console.log(d);
+            // console.log(Array.from(d.selectedItems));
+            let selectedItems = Array.from(d.selectedItems);
+            callback(selectedItems);
         }}
         columnSizingOptions={{
             time: {

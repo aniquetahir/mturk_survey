@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import _ from "lodash";
 import {
     Text,
@@ -21,7 +21,7 @@ const useStyles = makeStyles({
     }
 });
 
-export const SessionSurvey = ({session_data, ...props}) => {
+export const SessionSurvey = ({session_data, dataCallback, ...props}) => {
     const styles = useStyles();
     let flattenedSessionData = []
     flattenedSessionData.push({
@@ -39,6 +39,24 @@ export const SessionSurvey = ({session_data, ...props}) => {
         }
     });
     flattenedSessionData = flattenedSessionData.concat(commentData);
+    let [encapsulatedData, setEncapsulatedData] = useState({
+        bullying: [],
+        antiBullying: []
+    });
+    const setBullyingIdxs = (bIdxs) => {
+        let encopy = encapsulatedData;
+        encopy.bullying = bIdxs;
+        setEncapsulatedData(encopy);
+        dataCallback(encopy);
+    };
+
+    const setAntiBullyingIdxs = (abIdxs) => {
+        let encopy = encapsulatedData;
+        encopy.antiBullying = abIdxs;
+        setEncapsulatedData(encopy);
+        dataCallback(encopy);
+    };
+
 
     return (
         <div className={styles.field}>
@@ -47,12 +65,14 @@ export const SessionSurvey = ({session_data, ...props}) => {
             <HyperDataTable data={flattenedSessionData} highlight_idx={0} noSelection />
 
             <HyperTableQuestion question="Please select the comments which can be categorized as 'Bullying':"
+                                callback={setBullyingIdxs}
                                 tableData={flattenedSessionData} highlightIdx={-1} />
 
             <HyperTableQuestion question="Please select the comments which can be categorized as 'Anti-Bullying':"
                                 description="'Anti-Bullying' refers to discourse which aims to reduce or stop the effect
                                 of bullying. This consists of directly addressing the bully, as well as trying to mitigate
                                 bullying by being defensive/apologetic or addressing the victim of bullying to comfort them."
+                                callback={setAntiBullyingIdxs}
                                 tableData={flattenedSessionData} highlightIdx={-1} />
 
             {/* Questions about directionality for each comment */}

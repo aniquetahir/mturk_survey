@@ -16,7 +16,7 @@ const useStyles = makeStyles({
 });
 
 
-export const HyperTableQuestion = ({question, description, tableData, highlightIdx, ...props}) => {
+export const HyperTableQuestion = ({question, description, tableData, highlightIdx, callback, ...props}) => {
     const styles = useStyles();
     const labelId = useId('label')
     const hyperTableId = useId('table')
@@ -25,7 +25,7 @@ export const HyperTableQuestion = ({question, description, tableData, highlightI
         <div className={styles.field}>
             <Label htmlFor={hyperTableId} id={labelId}><h2>{question}</h2></Label>
             <Text>{hasDescription?description:""}</Text>
-            <HyperDataTable data={tableData} highlight_idx={highlightIdx} />
+            <HyperDataTable data={tableData} callback={callback} highlight_idx={highlightIdx} />
         </div>
     )
 }
