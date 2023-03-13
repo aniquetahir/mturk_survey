@@ -27,7 +27,7 @@ const styles = {
 }
 
 
-export const HyperDataTable = ( {data, highlight_idx, noSelection, ...props} ) => {
+export const HyperDataTable = ( {data, highlight_idx, noSelection, callback, ...props} ) => {
     // Create the table with the current comment highlighted
     // The following structure of items is used:
 	// {
@@ -37,6 +37,7 @@ export const HyperDataTable = ( {data, highlight_idx, noSelection, ...props} ) =
 	// }
      // Assumption is that the comments are pre-sorted in chronological order
     const hasSelection = noSelection?false:"multiselect";
+
      return (
 	<DataGrid
         style={{width: "100%"}}
@@ -45,6 +46,9 @@ export const HyperDataTable = ( {data, highlight_idx, noSelection, ...props} ) =
 	        selectionMode={hasSelection}
 	        getRowId={item=>item.id}
         resizableColumns={true}
+        onSelectionChange={(e, d) => {
+            console.log(d);
+        }}
         columnSizingOptions={{
             time: {
                 defaultWidth: 100,

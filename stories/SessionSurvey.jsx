@@ -9,7 +9,7 @@ import {
 } from "@fluentui/react-components";
 import {HyperDataTable} from "./HyperDataTable";
 import {HyperTableQuestion} from "./HyperTableQuestion";
-import {MCQ} from "./Mcq";
+import {MCQ, MCQMultiple} from "./Mcq";
 import {OpenEndedQuestion} from "./OpenEndedQuestion";
 
 const sessions  = require('../public/sessions.json')
@@ -56,10 +56,7 @@ export const SessionSurvey = ({session_data, ...props}) => {
                                 tableData={flattenedSessionData} highlightIdx={-1} />
 
             {/* Questions about directionality for each comment */}
-            <div className="navigation">
-                <Button style={{width: "200px"}}>Previous</Button>
-                <Button style={{width: "200px"}}>Next</Button>
-            </div>
+            {props.children}
         </div>
     )
 }
@@ -111,15 +108,68 @@ export const DirectionalitySurvey = ({session_data, ...props}) => {
     return (
         <div className={styles.field}>
             {directionalityQuestions}
-            <div className="navigation">
-                <Button style={{width: "200px"}}>Previous</Button>
-                <Button style={{width: "200px"}}>Next</Button>
-            </div>
+            {props.children}
         </div>
     )
 }
 
-export const BullyQuestions = async ({session_data, bully_idxs, ...props}) => {
+
+export const AntiBullyingQuestions = ({sessionData, antiBullyIdxs, ...props}) => {
+    const styles = useStyles();
+    let flattenedSessionData = [];
+    flattenedSessionData.push({
+        id: 0,
+        time: sessionData.time,
+        user: sessionData.user,
+        content: sessionData.content
+    });
+    let commentData = sessionData.comments.map((c, i) => {
+        return {
+            id: i + 1,
+            time: c.time,
+            user: c.user,
+            content: c.content
+        }
+    });
+    flattenedSessionData = flattenedSessionData.concat(commentData);
+    const antiBullyingQuestions = flattenedSessionData.map((c, i) => {
+        if (antiBullyIdxs.indexOf(i) != -1){
+            return (
+                <>
+                    <Text><h2>Consider the highlighted comment which was marked as "Anti-Bullying":</h2></Text>
+                    <HyperDataTable data={flattenedSessionData.slice(0, i+1)} highlight_idx={i} noSelection />
+                    <MCQMultiple
+                        question="How would you categorize the anti-bullying?"
+                        choices={[
+                            "Comforting. (the anti-bully is trying to reduce the effect of bullying by comforting the victim)",
+                            "Defensive. (the anti-bully communicates with the bully in a defensive/apologetic/agreeable manner in order to reduce the toxicity in the discourse.)",
+                            "Silencing. (the anti-bully communicates with the bully with the motive to make them stop bullying.)",
+                            "Other"
+                        ]}
+                    />
+
+                    <OpenEndedQuestion
+                        question="Why is the comment considered anti-bullying. Explain briefly in 256 characters or less."
+                        charLimit={256}
+                    />
+                </>
+            );
+        }else{
+            return null;
+        }
+    });
+
+    return (
+        <div className={styles.field}>
+            {antiBullyingQuestions}
+            {props.children}
+        </div>
+    );
+}
+
+
+
+export const BullyQuestions = ({session_data, bully_idxs, ...props}) => {
     const styles = useStyles();
     let flattenedSessionData = [];
     flattenedSessionData.push({
@@ -153,15 +203,12 @@ export const BullyQuestions = async ({session_data, bully_idxs, ...props}) => {
         }else{
             return null;
         }
-    })
+    });
 
     return (
         <div className={styles.field}>
             {bullyingQuestions}
-            <div className="navigation">
-                <Button style={{width: "200px"}}>Previous</Button>
-                <Button style={{width: "200px"}}>Next</Button>
-            </div>
+            {props.children}
         </div>
-    )
-}
+    );
+};
