@@ -12,8 +12,6 @@ import {HyperTableQuestion} from "./HyperTableQuestion";
 import {MCQ, MCQMultiple} from "./Mcq";
 import {OpenEndedQuestion} from "./OpenEndedQuestion";
 
-const sessions  = require('../public/sessions.json')
-
 const useStyles = makeStyles({
     field: {
         display: 'grid',
@@ -134,7 +132,7 @@ export const DirectionalitySurvey = ({session_data, ...props}) => {
 }
 
 
-export const AntiBullyingQuestions = ({sessionData, antiBullyIdxs, ...props}) => {
+export const AntiBullyingQuestions = ({sessionData, antiBullyIdxs, dataCallback, ...props}) => {
     const styles = useStyles();
     let flattenedSessionData = [];
     flattenedSessionData.push({
@@ -151,6 +149,29 @@ export const AntiBullyingQuestions = ({sessionData, antiBullyIdxs, ...props}) =>
             content: c.content
         }
     });
+    let [antiBullyAnswers, setAntiBullyAnswers] = useState({})
+
+    const setABCategory = (choices, i) => {
+        let abAnswers = antiBullyAnswers;
+        if(_.isUndefined(abAnswers[i])){
+            abAnswers[i] = {};
+        }
+        abAnswers[i]['categories'] = choices;
+        setAntiBullyAnswers(abAnswers);
+        dataCallback(abAnswers);
+    };
+
+    const setABExlaination = (exp, i) => {
+        let abAnswers = antiBullyAnswers;
+        if (_.isUndefined(abAnswers[i])) {
+            abAnswers[i] = {};
+        }
+        abAnswers[i]['explanation'] = exp;
+        setAntiBullyAnswers(abAnswers);
+        dataCallback(abAnswers);
+    }
+
+
     flattenedSessionData = flattenedSessionData.concat(commentData);
     const antiBullyingQuestions = flattenedSessionData.map((c, i) => {
         if (antiBullyIdxs.indexOf(i) != -1){
@@ -160,6 +181,7 @@ export const AntiBullyingQuestions = ({sessionData, antiBullyIdxs, ...props}) =>
                     <HyperDataTable data={flattenedSessionData.slice(0, i+1)} highlight_idx={i} noSelection />
                     <MCQMultiple
                         question="How would you categorize the anti-bullying?"
+                        callback={(selected)=>{setABCategory(selected, i);}}
                         choices={[
                             "Comforting. (the anti-bully is trying to reduce the effect of bullying by comforting the victim)",
                             "Defensive. (the anti-bully communicates with the bully in a defensive/apologetic/agreeable manner in order to reduce the toxicity in the discourse.)",
@@ -170,6 +192,7 @@ export const AntiBullyingQuestions = ({sessionData, antiBullyIdxs, ...props}) =>
 
                     <OpenEndedQuestion
                         question="Why is the comment considered anti-bullying. Explain briefly in 256 characters or less."
+                        callback={(exp)=>{setABExlaination(exp, i)}}
                         charLimit={256}
                     />
                 </>

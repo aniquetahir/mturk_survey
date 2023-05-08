@@ -8,6 +8,6 @@ export default {
 
 export const Primary = () => {
     return (
-        <Survey sessionIdx={0} />
+        <Survey sessionIdx={1} />
     )
 }

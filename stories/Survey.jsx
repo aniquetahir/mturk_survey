@@ -3,7 +3,7 @@ import {Button, FluentProvider, webLightTheme} from "@fluentui/react-components"
 import {AntiBullyingQuestions, BullyQuestions, DirectionalitySurvey, SessionSurvey} from "./SessionSurvey";
 import {max} from "lodash";
 
-const sessions = require('../public/sessions.json');
+const sessions = require('../public/4chan_sessions.json');
 
 const buttonStyle = {
     width: "200px"
@@ -14,7 +14,7 @@ export const Survey = ({sessionIdx}) => {
         0, // Bullying/Anti-Bullying questions
         1, // Directionality Quesitions
         2, // Bully Array
-        3  // Anti-Bully array
+        // 3  // Anti-Bully array
     ];
     const maxPage = max(pages);
 
@@ -51,6 +51,7 @@ export const Survey = ({sessionIdx}) => {
     let [bullyIdxs, setBullyIdxs] = useState([]);
     let [antiBullyIdxs, setAntiBullyIdxs] = useState([]);
 
+
     let dataCallback = e => {
         setBullyIdxs(e.bullying);
         setAntiBullyIdxs(e.antiBullying);
@@ -65,17 +66,21 @@ export const Survey = ({sessionIdx}) => {
                 {navigationElements}
             </SessionSurvey>
         ),
-        (
-            <>
-            {navigationElements}
-            {/*<DirectionalitySurvey session_data={currSession}>{navigationElements}</DirectionalitySurvey>*/}
-            </>
-        ),
+        // (
+        //     <>
+        //     {navigationElements}
+        //     {/*<DirectionalitySurvey session_data={currSession}>{navigationElements}</DirectionalitySurvey>*/}
+        //     </>
+        // ),
         (
             <BullyQuestions bully_idxs={bullyIdxs} session_data={currSession}>{navigationElements}</BullyQuestions>
         ),
         (
-            <AntiBullyingQuestions antiBullyIdxs={antiBullyIdxs} sessionData={currSession}>{navigationElements}</AntiBullyingQuestions>
+            <AntiBullyingQuestions
+                antiBullyIdxs={antiBullyIdxs}
+                sessionData={currSession}
+                dataCallback={(d)=>console.log(d)}
+            >{navigationElements}</AntiBullyingQuestions>
         )
 
     ];

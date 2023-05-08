@@ -1,4 +1,5 @@
 import React from "react";
+import _ from "lodash";
 import {
     Label,
     makeStyles,
@@ -17,7 +18,7 @@ const useStyles = makeStyles({
     }
 });
 
-export const OpenEndedQuestion = ({question, charLimit, ...props}) => {
+export const OpenEndedQuestion = ({question, charLimit, callback, ...props}) => {
     const styles = useStyles();
     const labelId = useId('label');
     const textareaId = useId('textarea');
@@ -27,6 +28,7 @@ export const OpenEndedQuestion = ({question, charLimit, ...props}) => {
         if (data.value.length <= charLimit) {
             setValue(data.value);
         }
+        _.debounce(()=>{callback(data.value);}, 1000);
     };
 
     return (

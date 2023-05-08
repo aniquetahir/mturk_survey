@@ -17,7 +17,10 @@ import './hyperdatatable.css'
 const columns = [
     createTableColumn({columnId: 'time', renderHeaderCell: () => 'Time', renderCell: (item) => {return item.time}}),
     createTableColumn({columnId: 'author', renderHeaderCell: () => 'Author', renderCell: (item) => {return item.user}}),
-    createTableColumn({columnId: 'comment', renderHeaderCell: () => 'Comment', renderCell: (item) => {return item.content}}),
+    createTableColumn({columnId: 'comment', renderHeaderCell: () => 'Comment', renderCell: (item) =>
+        {return (
+            <div dangerouslySetInnerHTML={{__html: item.content}} />
+        );}}),
 ];
 
 const styles = {
@@ -53,12 +56,12 @@ export const HyperDataTable = ( {data, highlight_idx, noSelection, callback, ...
         }}
         columnSizingOptions={{
             time: {
-                defaultWidth: 100,
-                idealWidth: 100
-            },
-            author: {
                 defaultWidth: 150,
                 idealWidth: 150
+            },
+            author: {
+                defaultWidth: 100,
+                idealWidth: 100
             },
             comment: {
                 defaultWidth: 300,
