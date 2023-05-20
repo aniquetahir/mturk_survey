@@ -28,6 +28,7 @@ export const OpenEndedQuestion = ({question, charLimit, callback, ...props}) => 
         if (data.value.length <= charLimit) {
             setValue(data.value);
         }
+
         _.debounce(()=>{callback(data.value);}, 1000);
     };
 
