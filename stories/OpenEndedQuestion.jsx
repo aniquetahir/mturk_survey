@@ -24,12 +24,14 @@ export const OpenEndedQuestion = ({question, charLimit, callback, ...props}) => 
     const textareaId = useId('textarea');
     const [value, setValue] = React.useState('');
 
+    const throttledCallback = React.useCallback(_.throttle(callback, 1000), []);
+
     const onChange = (ev, data) => {
         if (data.value.length <= charLimit) {
             setValue(data.value);
+            throttledCallback(data.value);
         }
 
-        _.debounce(()=>{callback(data.value);}, 1000);
     };
 
     return (

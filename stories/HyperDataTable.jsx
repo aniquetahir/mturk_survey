@@ -12,10 +12,10 @@ import {
     createTableColumn,
 } from '@fluentui/react-components';
 
-import './hyperdatatable.css'
+import './hyperdatatable.module.css';
 
 const columns = [
-    createTableColumn({columnId: 'time', renderHeaderCell: () => 'Time', renderCell: (item) => {return item.time}}),
+    // createTableColumn({columnId: 'time', renderHeaderCell: () => 'Time', renderCell: (item) => {return item.time}}),
     createTableColumn({columnId: 'author', renderHeaderCell: () => 'Author', renderCell: (item) => {return item.user}}),
     createTableColumn({columnId: 'comment', renderHeaderCell: () => 'Comment', renderCell: (item) =>
         {return (
@@ -28,6 +28,7 @@ const styles = {
         backgroundColor: 'yellow'
     }
 }
+
 
 
 export const HyperDataTable = ( {data, highlight_idx, noSelection, callback, ...props} ) => {
@@ -60,12 +61,12 @@ export const HyperDataTable = ( {data, highlight_idx, noSelection, callback, ...
                 idealWidth: 150
             },
             author: {
-                defaultWidth: 100,
-                idealWidth: 100
+                defaultWidth: 150,
+                idealWidth: 150
             },
             comment: {
-                defaultWidth: 300,
-                idealWidth: 300
+                defaultWidth: 400,
+                idealWidth: 400
             }
         }}
 

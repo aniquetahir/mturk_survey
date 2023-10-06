@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect, createRef} from "react";
 import _ from "lodash";
 import {
     Text,
@@ -37,10 +37,12 @@ export const SessionSurvey = ({session_data, dataCallback, ...props}) => {
         }
     });
     flattenedSessionData = flattenedSessionData.concat(commentData);
+
     let [encapsulatedData, setEncapsulatedData] = useState({
         bullying: [],
         antiBullying: []
     });
+
     const setBullyingIdxs = (bIdxs) => {
         let encopy = encapsulatedData;
         encopy.bullying = bIdxs;
@@ -59,7 +61,7 @@ export const SessionSurvey = ({session_data, dataCallback, ...props}) => {
     return (
         <div className={styles.field}>
             {/*<!-- The first element just shows the entire conversation to the user as context -->*/}
-            <Text>Please read the following conversation on instagram:</Text>
+            <Text>Please read the following social media conversation:</Text>
             <HyperDataTable data={flattenedSessionData} highlight_idx={0} noSelection />
 
             <HyperTableQuestion question="Please select the comments which can be categorized as 'Bullying':"
@@ -78,6 +80,7 @@ export const SessionSurvey = ({session_data, dataCallback, ...props}) => {
         </div>
     )
 }
+
 
 export const DirectionalitySurvey = ({session_data, ...props}) => {
     const styles = useStyles();
@@ -134,6 +137,14 @@ export const DirectionalitySurvey = ({session_data, ...props}) => {
 
 export const AntiBullyingQuestions = ({sessionData, antiBullyIdxs, dataCallback, ...props}) => {
     const styles = useStyles();
+
+    let abRef = createRef();
+
+    useEffect(()=>{
+        // scroll to top of this element when mounted
+        abRef.current.scrollIntoView();
+    });
+
     let flattenedSessionData = [];
     flattenedSessionData.push({
         id: 0,
@@ -176,7 +187,7 @@ export const AntiBullyingQuestions = ({sessionData, antiBullyIdxs, dataCallback,
     const antiBullyingQuestions = flattenedSessionData.map((c, i) => {
         if (antiBullyIdxs.indexOf(i) != -1){
             return (
-                <>
+                <div key={i}>
                     <Text><h2>Consider the highlighted comment which was marked as "Anti-Bullying":</h2></Text>
                     <HyperDataTable data={flattenedSessionData.slice(0, i+1)} highlight_idx={i} noSelection />
                     <MCQMultiple
@@ -195,25 +206,38 @@ export const AntiBullyingQuestions = ({sessionData, antiBullyIdxs, dataCallback,
                         callback={(exp)=>{setABExlaination(exp, i)}}
                         charLimit={256}
                     />
-                </>
+                </div>
             );
         }else{
             return null;
         }
     });
 
+    let message = (
+        <p>{antiBullyIdxs.length === 0?"No Anti-Bullying Comments. Proceed to next step.":""}</p>
+    );
+
     return (
-        <div className={styles.field}>
+        <div className={styles.field} ref={abRef}>
             {antiBullyingQuestions}
+            <br />
+            {message}
+            <br />
             {props.children}
         </div>
     );
 }
 
 
-
-export const BullyQuestions = ({session_data, bully_idxs, ...props}) => {
+export const BullyQuestions = ({session_data, bully_idxs, dataCallback, ...props}) => {
     const styles = useStyles();
+
+    let bRef = createRef();
+
+    useEffect(()=>{
+        bRef.current.scrollIntoView();
+    });
+
     let flattenedSessionData = [];
     flattenedSessionData.push({
         id: 0,
@@ -229,28 +253,49 @@ export const BullyQuestions = ({session_data, bully_idxs, ...props}) => {
             content: c.content
         }
     });
+
     flattenedSessionData = flattenedSessionData.concat(commentData);
+
+    let [bullyAnswers, setBullyAnswers] = useState({})
+
+    const setExplanation = (exp, i) => {
+        let answers = bullyAnswers;
+        if (_.isUndefined(answers[i])){
+            answers[i] = {};
+        }
+        answers[i]['explanation'] = exp;
+        setBullyAnswers(answers);
+        dataCallback(answers);
+    }
 
     let bullyingQuestions = flattenedSessionData.map((c, i) => {
         if (bully_idxs.indexOf(i) != -1){
             return (
-                <>
+                <div key={i}>
                     <Text><h2>Consider the highlighted comment which was marked as "Bullying":</h2></Text>
                     <HyperDataTable data={flattenedSessionData.slice(0, i+1)} highlight_idx={i} noSelection />
                     <OpenEndedQuestion
                         question="Why is the comment considered Bullying? Explain briefly in 256 characters or less."
+                        callback={(exp) => {setExplanation(exp, i)}}
                         charLimit={256}
                     />
-                </>
+                </div>
             );
         }else{
             return null;
         }
     });
 
+    let message = (
+      <p>{bully_idxs.length === 0?"No Bullying comments selected. Proceed to next step.":""}</p>
+    );
+
     return (
-        <div className={styles.field}>
+        <div className={styles.field} ref={bRef}>
             {bullyingQuestions}
+            <br/>
+            {message}
+            <br/>
             {props.children}
         </div>
     );
